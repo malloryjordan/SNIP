@@ -1,6 +1,4 @@
-======================================================
-SNIP Sustainable Network Infrastructure Planning Model
-======================================================
+# SNIP Sustainable Network Infrastructure Planning Model
 
 Detailed information about SNIP can be found in:
 
@@ -14,3 +12,4 @@ Instructions on how to install SNIP and how to prepare
 your geographical datas can either be found on the wiki 
 of this site.
 
+**The SNIP model was updated and modified for use in rural Alabama in 2025.**

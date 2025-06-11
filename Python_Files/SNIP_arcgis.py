@@ -32,13 +32,24 @@
 # Contact:   sven.eggimann@eawag.ch
 # Version    1.0
 # Date:      1.07.2015
-# Autor:     Eggimann Sven
+# Author:    Eggimann Sven
 # ======================================================================================
-import arcpy, os, sys               # General Imports
+# The SNIP model was updated and modified for use in rural Alabama in 2025.
+# For detailed information see Jordan et al. (in prep).
+
+# The model was modified for Python 3.11 and ArcGIS Pro 3.4
+
+# Author:   Mallory Jordan
+# Date:     June 11, 2025
+# Contact:  maj0082@auburn.edu
+# ======================================================================================
+import arcpy, os, sys, time               # General Imports
 import gc; gc.disable()             # Don't allow garbage collection
 
-# Change after the insallation of the ArcToolBox
-pythonScriptPath = "Q://Abteilungsprojekte/Eng/SWWData/Eggimann_Sven/09-GIS-Python/0-PythonFiles/SNIP_V1_paper_one/"  # Path where SNIP Python files are storeds
+start = time.perf_counter()   # Start script timer
+
+# Change after the installation of the ArcToolBox
+pythonScriptPath = "Q://Abteilungsprojekte/Eng/SWWData/Eggimann_Sven/09-GIS-Python/0-PythonFiles/SNIP_V1_paper_one/"  # Path where SNIP Python files are stored
 
 def rewritePath(inPath):
     ''' Replace Characters in string path to get correct path.'''
@@ -67,41 +78,41 @@ inDHM = sys.argv[4]                                     # DEM point shape file (
 outListFolder = sys.argv[2].replace("\\","/") + "/"     # Output Folder
 demAlreadyReadOut = 1                                   # 1: Dem is already read out 0: Read out DEM
 
-# Model parameters (based parameters as in Eggimann et al. 2015)
+# Model parameters (based parameters as in Eggimann et al. 2015 and Jordan et al. in prep)
 # ========================================================================
   
 # Sewer related
-maxTD = 8                                   # [m] Maximum trench depth
-minTD = 0.25                                # [m] Min trench depth
+maxTD = 4                                   # [m] Maximum trench depth
+minTD = 0.9                                 # [m] Min trench depth
 minSlope = 1                                # [%] Criteria of minimum slope without pumps needed
 stricklerC = 85                             # [m^1/3 s^-1] Stricker Coefficient
-EW_Q = 0.162                                # [m3 / day] 1 EW is equal to 162 liter. This factor must be the same as for the GIS-Files
+EW_Q = 0.3785                               # [m3 / day] 1 EW is equal to 378.5 liter (~ 100 gallons). This factor must be the same as for the GIS-Files and in unts of [m3 / day].
     
-# Cost related
-resonableCostsPerEW = 7540                  # [currency] Reasonable Costs
-pricekWh = 0.20                             # [currency / kWh] price per kWh of electricity 
+#Cost related
+resonableCostsPerEW = 4220                  # [currency] Reasonable Costs
+pricekWh = 0.12                             # [currency / kWh] price per kWh of electricity
 pumpingYears = 30                           # [years] Pump lifespan
-discountYearsSewers = 80                    # [years] Pipe lifespan
-wwtpLifespan = 33                           # [years] WWTP lifespan
-interestRate = 2                            # [%] Real interest rate
-operationCosts = 5                          # [currency / meter] operation costs per meter pipe per year
+discountYearsSewers = 50                    # [years] Pipe lifespan
+wwtpLifespan = 25                           # [years] WWTP lifespan
+interestRate = 2.75                         # [%] Real interest rate
+operationCosts = 5                          # [currency / meter] operation costs per meter pipe per year, denoted as operationCostsPerYear in the cost script
 pumpInvestmentCosts = 500                   # [currency] Fix costs of pumps
-fc_SewerCost = 0                            # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve  (e.g. 10 % = 0.1)
-fc_wwtpOpex = 0                             # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve  (e.g. 10 % = 0.1)
-fc_wwtpCapex = 0                            # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve 
+fc_SewerCost = 0.0                          # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve  (e.g. 10 % = 0.1)
+fc_wwtpOpex = 0.0                           # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve  (e.g. 10 % = 0.1)
+fc_wwtpCapex = 0.0                          # [-20% - 20%] Used for Sensitivity Analysis to shift cost curve
         
 # Algorithm related
-f_street = 1.7                              # [-] Factor to set How close the sewer follow the road network
-f_merge = 1.4                               # [-] Factor do determine how the WWTPS are merged.
+f_street = 2.4                              # [-] Factor to set How close the sewer follow the road network
+f_merge = 2.4                               # [-] Factor do determine how the WWTPS are merged.
 f_topo = 1.2                                # [-] Factor weighting the dem graph creation for the a* algorithm
     
-neighborhood = 100                          # [m] Defines how large the neighbourhood for the a-Star Algorithm (Needs to be at least twice the raster size)     
-AggregateKritStreet = 100                   # [m] How long the distances on the roads can be in maximum be before they get aggregated on the street network (must not be 0)
+neighborhood = 180                          # [m] Defines how large the neighbourhood for the a-Star Algorithm (Needs to be at least twice the raster size)
+AggregateKritStreet = 50                    # [m] How long the distances on the roads can be in maximum be before they get aggregated on the street network (must not be 0)
 border = 3000                               # [m] How large the virtual dem borders are around topleft and bottom
 tileSize = 50                               # [m] for selection of density based starting node
     
-pipeDiameterPrivateSewer = 0.25             # Cost Assumptions private sewers: Pipe Diameter
-avgTDprivateSewer = 0.25                    # Cost Assumptions private sewers: AVerage Trench Depth
+pipeDiameterPrivateSewer = 0.1             # [m] Cost Assumptions private sewers: Pipe Diameter
+avgTDprivateSewer = 0.9                    # [m] Cost Assumptions private sewers: Average Trench Depth
     
 # ArcGIS Representation related
 drawHouseConnections = 1                    # 1: House connections are drawn in ArcGIS, 0: House Connections are not drawn in ArcGIS
@@ -205,10 +216,23 @@ for entry in densityRaster:
 # Write out statistics
 statistics = getStatistics(startnode, sewers, pointsPrim, aggregatetPoints, WWTPs, edgeList, nrOfNeighboursDensity, EW_Q, buildings, buildPoints)     
 
-statistics.append(completePumpCosts)                    # Append costs to statistics.
-statistics.append(completeWWTPCosts)                    # Append costs to statistics.
-statistics.append(completePublicPipeCosts)              # Append costs to statistics.
-statistics.append(totCostPrivateSewer)                  # Append costs to statistics.
-statistics.append(totSystemCostsNoPrivate)              # Append costs to statistics.
-statistics.append(totSystemCostsWithPrivate)            # Append costs to statistics.
+statistics.append(f"completePumpCosts: {completePumpCosts}")                    # Append costs to statistics.
+statistics.append(f"completeWWTPCosts: {completeWWTPCosts}")                    # Append costs to statistics.
+statistics.append(f"completePublicPipeCosts: {completePublicPipeCosts}")              # Append costs to statistics.
+statistics.append(f"totCostPrivateSewer: {totCostPrivateSewer}")                  # Append costs to statistics.
+statistics.append(f"totSystemCostsNoPrivate: {totSystemCostsNoPrivate}")              # Append costs to statistics.
+statistics.append(f"totSystemCostsWithPrivate: {totSystemCostsWithPrivate}")            # Append costs to statistics.
 writeTotxt(outListFolder, "statistics", statistics)     # Append costs to statistics.
+
+# Calculate and print time required to complete script
+end = time.perf_counter()
+runtime = end - start
+
+if runtime < 60:
+    print(f'Runtime: {runtime:.2f} seconds')
+elif runtime < 3600:  # Less than one hour
+    minutes = runtime / 60
+    print(f'Runtime: {minutes:.2f} minutes')
+else:
+    hours = runtime / 3600
+    print(f'Runtime: {hours:.2f} hours')

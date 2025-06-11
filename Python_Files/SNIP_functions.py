@@ -32,7 +32,16 @@
 # Contact:   sven.eggimann@eawag.ch
 # Version    1.0
 # Date:      1.07.2015
-# Autor:     Eggimann Sven
+# Author:     Eggimann Sven
+# ======================================================================================
+# The SNIP model was updated and modified for use in rural Alabama in 2025.
+# For detailed information see Jordan et al. (in prep).
+
+# The model was modified for Python 3.11 and ArcGIS Pro 3.4
+
+# Author:   Mallory Jordan
+# Date:     June 11, 2025
+# Contact:  maj0082@auburn.edu
 # ======================================================================================
 
 # Imports
@@ -66,7 +75,7 @@ def distanceCalc3d(p0, p1):
     Output Arguments:
     distance              --    Distance between the points
     slope                 --    Slope between the two points
-    heightDiff            --    Height difference betwen the two points
+    heightDiff            --    Height difference between the two points
     """
     xp0, xp1, yp0, yp1, zFrom, zTo = p0[0], p1[0], p0[1], p1[1], p0[2], p1[2]
     distancePlanar = math.hypot(xp0 - xp1, yp0 - yp1) 
@@ -166,7 +175,7 @@ def assignHighAggregatedNodes(aggregatetPoints, rasterPoints, rasterSize, minTD)
     withHeith = []
     for i in aggregatetPoints:
         X, Y = i[1], i[2]
-        for f in rasterPoints:  # Assign height 
+        for f in rasterPoints:  # Assign height
             if (f[1] <= X + rasterSize and f[1] >= X - rasterSize) and (f[2] <= Y + rasterSize and f[2] >= Y - rasterSize):
                 heightSTART = f[3]
                 break
@@ -702,7 +711,7 @@ def costsBetweenWWTPs(pathToWTP, edgesID, nodes, inverse, pumps, minTD, discount
     nodes                 --    nodes
     inverse               --    Direction criteria
     pumps                 --    list with pumps
-    minTD                 --    minium trench depth
+    minTD                 --    minimum trench depth
     discountYearsSewers   --    lifespan of sewers
     interestRate          --    real interest rate
     stricklerC            --    strickler coefficient
@@ -936,7 +945,7 @@ def delFromSewers(sewers, path):
                  
 def testExpansion(PN):
     '''
-    This function tests wheter the EM still needs to be executed.
+    This function tests whether the EM still needs to be executed.
     
     Input:
     PN           -    Length of prim edges
@@ -1371,7 +1380,7 @@ def addDEMPntstoNodes(nodes, archPathListMST, boundingCandidates, fromNode, toNo
         for edge in archPathListMST:
             append, newPoint1 = 1, edge[0]
 
-            for i in nodes:  # Check wheter already in nodes
+            for i in nodes:  # Check whether already in nodes
                 if i[0] == newPoint1:
                     append = 0
                     break
@@ -1396,7 +1405,7 @@ def addDEMPntstoNodes(nodes, archPathListMST, boundingCandidates, fromNode, toNo
 
 def getClosestNetworkWWTP(nodes, WWTPs, sewers, pZero, checkBackConnectionID):
     """
-    This Function calculates the closeset network node (merging heuristic)
+    This Function calculates the closest network node (merging heuristic)
     Then it iterates on the found network until a wwtp is reached
 
     Input Arguments: 
@@ -1434,7 +1443,7 @@ def getClosestNetworkWWTP(nodes, WWTPs, sewers, pZero, checkBackConnectionID):
 
 def flowIfSameCheck(WWTPs, aggregatetPoints):
     '''
-    This function checks wheter after the SNIP calculation there was lost any flow. This is a controlling function.
+    This function checks whether after the SNIP calculation there was lost any flow. This is a controlling function.
     In case the flow is no the same throw an error (except when a connection is enforced and the flow cannot be the same).
     
     Input:
@@ -1463,9 +1472,9 @@ def calcZValue(aggregatetPoints, forceZ, iterativeCostCalc, hypoWWTPcorrectFlow,
     
     Input:
     aggregatetPoints         -    Aggregated Nodes
-    forceZ                   -    Criteria wheter a hihger Z value is enforced
-    iterativeCostCalc        -    Criteria wheter costs are calculated in each iteration
-    hypoWWTPcorrectFlow      -    Flow in case a higher Z value is inforced
+    forceZ                   -    Criteria whether a higher Z value is enforced
+    iterativeCostCalc        -    Criteria whether costs are calculated in each iteration
+    hypoWWTPcorrectFlow      -    Flow in case a higher Z value is enforced
     WWTPs                    -    waste water treatment plants
     '''
     sources = len(aggregatetPoints)
@@ -1481,7 +1490,7 @@ def calcZweighted(forceZ, iterativeCostCalc, hypoWWTPcorrectFlow, sewers, aggreg
     This function calculates the Z value according to Eggimann et al. (2015).
     
     Input:
-    forceZ                     -    Criteria wheter a connection is enforced
+    forceZ                     -    Criteria whether a connection is enforced
     iterativeCostCalc          -    List storing costs
     hypoWWTPcorrectFlow        -    Flow in case a connection is enforced
     sewers                     -    Sewer Network
@@ -1504,7 +1513,7 @@ def calcZweighted(forceZ, iterativeCostCalc, hypoWWTPcorrectFlow, sewers, aggreg
 
 def turnNodesIntoWWTP(WWTPs, nodes, aggregatetPoints, sewers):
     '''
-    This function searchs all not yet connected nodes and adds them to the WWTP. This is used in case SNIP is aborted before reaching the MM.
+    This function searches all not yet connected nodes and adds them to the WWTP. This is used in case SNIP is aborted before reaching the MM.
     
     Input:
     WWTPS             -    WWTPs
@@ -1921,10 +1930,10 @@ def initialSetNetwork(sewers, toNode, fromNode, minDit):
 def costComparison(totCostI, totCostII, totCostIII, resonableCosts, costConnection, ignoreRC, forceCentralConnection, finishedMerging):
     """
     This function compares different cost options by considering reasonable costs. 
-    If reasonable costs are considered, a central connection is choosen even if
+    If reasonable costs are considered, a central connection is chosen even if
     decentral option would be cheaper (but central connection needs to be cheaper than reasonable costs).
-    Reasonsable costs only matter if decentral conneciton is cheaper
-    than central connection and central connection is cheaper than resonable costs. 
+    Reasonable costs only matter if decentral connection is cheaper
+    than central connection and central connection is cheaper than reasonable costs.
     
     Input Arguments: 
     totCostI, totCostII, totCostA3     --   Different costs for different systems
@@ -1934,8 +1943,8 @@ def costComparison(totCostI, totCostII, totCostIII, resonableCosts, costConnecti
     finishedMerging                    --   Only Force connection if Expansion Module is finished
     
     Output Arguments:
-    wwtpSWAP                           --   Criteria wheter inversed flow is choosen.
-    decCrit                            --   Criteria wheter a decentral option is choosen. 
+    wwtpSWAP                           --   Criteria whether inversed flow is chosen.
+    decCrit                            --   Criteria whether a decentral option is chosen.
     """
 
     # If a central connection is forced:
@@ -2000,6 +2009,7 @@ def costComparison(totCostI, totCostII, totCostIII, resonableCosts, costConnecti
 
 def delWWTP(WWTPs, ID):
     """
+
     This function deletes a wwtp.
     
     Input Arguments: 
@@ -2042,7 +2052,7 @@ def loopTest(pathNearWTP, sewersNoC):
 
     Output Arguments:
     pathNearWTP       --    Nr of sources
-    loops             --    Criteria wheter loop was found
+    loops             --    Criteria whether loop was found
     """
     # Iterate path until last element is in existing network. From this node, calculate back path to closest wwtp
     position = -1
@@ -2137,7 +2147,7 @@ def changeTD(nodes, edgesList, pumps, pathToNetwork, maxTD, minSlope, inflowNode
         IDold, cord_old, _, _, _, trenchFrom = getPns(fromID, nodesCopy)
         newPipeSlope =  (trenchFrom - trenchTo) / length                        # New pipe slope
         
-        # Update slope in edgesIDCopy which becomse the slope of the pipe
+        # Update slope in edgesIDCopy which becomes the slope of the pipe
         for e in edgesIDCopy:
             if e[0][0] == fromID and e[1][0] == toID:
                 e[3] = newPipeSlope * - 1                                       # Change slope with pipe installation
@@ -2491,13 +2501,13 @@ def checkTrenchLifting(lastID, sewers, pumps, nodesCopy, nodes, trenchFrom, tren
     nodesCopy             --    copy of nodes
     nodes                 --    nodes
     trenchFrom            --    Trench Depth From node
-    minhDiffRequired      --    Minium required height difference
+    minhDiffRequired      --    Minimum required height difference
     posToNode             --    Position To Node
     inflowNodes           --    Inflowing nodes
     toID                  --    ID To Node
     fromID                --    ID From Node
     minSlope              --    Slope Criteria
-    pumpFlow              --    Criteria wheter the flow is pumped or not
+    pumpFlow              --    Criteria whether the flow is pumped or not
     hTo                   --    Height To node
     hFrom                 --    Height from node
     minTD                 --    Minimum trench depth
@@ -2825,7 +2835,7 @@ def checkifInWWTPs(WWTPs, ID):
     ID        -    ID
     
     Ouput:
-    criteria  -    Criteria wheter WWTP exists or not
+    criteria  -    Criteria whether WWTP exists or not
     '''
     criteria = False
     for i in WWTPs:
@@ -2888,7 +2898,7 @@ def checkIfPathAreIdentical(tooLongPath, waytoclosestWWTP, network_ohneArchPath,
 
 def getFlowtoCalculateRC(allPopNodesOntheWay, flowFrom, flowTo, nodes):
     '''
-    This function checks, wheter the FROM Network or the TO Network. Then is defineds the one with 
+    This function checks, whether the FROM Network or the TO Network. Then defines the one with
     the smaller flow as decentral.
     
     Next it iterates over all populated WWTPs along the connection path (except for the first node).
@@ -2996,9 +3006,9 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
     SNIP Algorithm
     
     Input Arguments
-    OnlyExecuteMerge       -    Criteria wheter only the Expansion Module is executed
+    OnlyExecuteMerge       -    Criteria whether only the Expansion Module is executed
     outListFolder          -    Path to store results
-    runNr                  -    Shows wheter expansion module is first time exectued (1) or used in merging module (2)
+    runNr                  -    Shows whether expansion module is first time executed (1) or used in merging module (2)
     nodes                  -    Nodes
     anteilDaten            -    Number of connected points
     streetNetwork          -    Intermediate Results
@@ -3027,25 +3037,31 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
     minTD = inParameter[0]                                  # [meter] Min trench depth
     maxTD = inParameter[1]                                  # [meter] Maximum trench depth
     minSlope = inParameter[2]                               # [%] Criteria of minimum slope without pumps needed
-    f_merge = inParameter[3]                                # Factor do determine how the OST are reconnected. Puts the size in relation ot the distance. If large, the size gets more important
-    resonableCostsPerEW = inParameter[4]                    # [CHF] Reasonable Costs per EW
-    neighborhood = inParameter[5]                           # How large the neibhourhood is for searching paths
+    f_merge = inParameter[3]                                # Factor to determine how the OST are reconnected. Puts the size in relation ot the distance. If large, the size gets more important
+    resonableCostsPerEW = inParameter[4]                    # [currency] Reasonable Costs per EW
+    neighborhood = inParameter[5]                           # How large the neighbourhood is for searching paths
     streetFactor = inParameter[6]                           # How much the path follows the roads
     pricekWh = inParameter[7]                               # Electricity prices
-    pumpYears = inParameter[8]                              # Number of years the pummp needs to pump [years]. Needed in order to compare lifespan of pipes to pumping costs
+    pumpYears = inParameter[8]                              # Number of years the pump needs to pump [years]. Needed in order to compare lifespan of pipes to pumping costs
     discountYearsSewers = inParameter[9]                    # [year] Years the pips will survive
     interestRate = inParameter[10]                          # [%] Interest rate
     stricklerC = inParameter[11]                            # [m3/s] Strickler coefficient
     EW_Q = inParameter[12]                                  # [l] conversion factor from liter to EW 162 Liter 
     wwtpLifespan = inParameter[13]                          # [year] how long the wwtp operates
-    operationCosts = inParameter[14]                        # [CHF / meter] Average operation costs per meter 
-    
+    operationCosts = inParameter[14]                        # [currency / meter] Average operation costs per meter
+    #pumpInvestmentCosts = inParameter[15]                  # [CHF] Investment Costs pumps
+    f_topo = inParameter[16]                                # [-] Weighting factor for the DEM graph creation of the topography
+    f_SewerCost = inParameter[17]                           # [-] cost factor
+    fc_wwtpOperation  = inParameter[18]                     # [-] cost factor
+    fc_wwtpReplacement = inParameter[19]                    # [-] cost factor
+
     arcpy.AddMessage(" ")
-    arcpy.AddMessage("All Paramterers")
+    arcpy.AddMessage("All Parameters")
     arcpy.AddMessage("----------------")
     arcpy.AddMessage("minTD: " + str(minTD))
     arcpy.AddMessage("maxTD: " + str(maxTD))
     arcpy.AddMessage("f_merge: " + str(f_merge))
+    arcpy.AddMessage("f_topo: " + str(f_topo))
     arcpy.AddMessage("resonableCostsPerEW: " + str(resonableCostsPerEW))
     arcpy.AddMessage("neighborhood: " + str(neighborhood))
     arcpy.AddMessage("streetFactor: " + str(streetFactor))
@@ -3057,6 +3073,9 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
     arcpy.AddMessage("EW_Q: " + str(EW_Q))
     arcpy.AddMessage("wwtpLifespan: " + str(wwtpLifespan))
     arcpy.AddMessage("operationCosts: " + str(operationCosts))
+    arcpy.AddMessage("fc_SewerCost: " + str(f_SewerCost))
+    arcpy.AddMessage("fc_wwtpOpex: " + str(fc_wwtpOperation))
+    arcpy.AddMessage("fc_wwtpCapex: " + str(fc_wwtpReplacement))
     arcpy.AddMessage(" ")
     arcpy.AddMessage(" ")
 
@@ -3073,18 +3092,14 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
     totalSystemCosts = []                                   # List storing total system costs and Z
     hypoWWTPcorrectFlow = []                                # Initial
     
-    #pumpInvestmentCosts = inParameter[15]                  # [CHF] Investment Costs pumps
-    f_topo = inParameter[16]                                # [-] Weighting factor for the DEM graph creation of the topography
-    f_SewerCost = inParameter[17]                           # [-] cost factor
-    fc_wwtpOperation  = inParameter[18]                     # [-] cost factor
-    fc_wwtpReplacement = inParameter[19]                    # [-] cost factor
+
                                  
     # Initial calculations
     hypoZWeighted = 0                                       # Initial weighted Z value
     hypoCostsOld = 0                                        # Initialization Hypothetical costs
     reActivationEM = 0                                      # If EM is first time loade == 0, otherwhise 1 (later for reconnection)
-    firstMergeCrit = 1                                      # Criteria wheter in first or subsequent mering module execusion
-    Zreached = 0                                            # Criteria wheter the requested Z is reached
+    firstMergeCrit = 1                                      # Criteria whether in first or subsequent merging module execusion
+    Zreached = 0                                            # Criteria whether the requested Z is reached
 
     if OnlyExecuteMerge == 0:
         #arcpy.AddMessage("NODE: " + str(startnode))
@@ -3092,11 +3107,11 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
         WWTPs = addOriginTolistWWTPs(nodes, WWTPs, startnode) # Add wwtp to listwwtps
         
     # Additional factors for aborting the SNIP at a certain Z-Value
-    iterativeCostCalc = 0                                     # Wheter iteratiely the costs should be calculated   
+    iterativeCostCalc = 0                                     # Whether iteratively the costs should be calculated
     ignoreOnlyExecuteMerge = 0
     afterMM = False
     
-    forceZ = False                                             # Criteria wheter SNIP is aborted at the optimum or articially forced to connect further
+    forceZ = False                                             # Criteria whether SNIP is aborted at the optimum or articially forced to connect further
     ZtoReach = 0.99                                            # In case artifically connection is enforced SNIP terminates at this value (must be smaller than 1)
 
     if forceZ == True:  
@@ -3355,7 +3370,7 @@ def SNIP(OnlyExecuteMerge, outListFolder, runNr, nodes, anteilDaten, streetNetwo
                     Zreached, expansion, firstIteration, PN = 1, 0, 0, []
             firstIteration = 0 
 
-        # Merging modul after Expansion Module
+        # Merging module after Expansion Module
         if Zreached == 0:                                                       # Go to Merging Module
             nodes, sewers, pumps, WWTPs, PN, edgeList, totalSystemCosts = mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeCrit, aggregatetPoints, nodes, WWTPs, sewers_Current, edgeList, pumps, PN, sewers, streetNetwork, f_merge, minTD, maxTD, minSlope, discountYearsSewers, interestRate, stricklerC, operationCosts, pricekWh, pumpYears, wwtpLifespan, EW_Q, resonableCostsPerEW, f_SewerCost, fc_wwtpOperation, fc_wwtpReplacement, totalSystemCosts, iterativeCostCalc) 
             runNr, firstMergeCrit, reActivationEM = 0, 0, 1                     # Expansion module is finished, As from now on the EM is only reactivated    
@@ -3399,10 +3414,10 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
     Merging Module
     
     Input Arguments:
-    OnlyExecuteMerge     -    Shows wheter summary calculation with different folders: 1 --> yes
+    OnlyExecuteMerge     -    Shows whether summary calculation with different folders: 1 --> yes
     forceZ               -    Criteria to reach full centralization
     ZtoReach             -    Abort Z criteria
-    firstMergeCrit       -    Criteria wheter executed the first time or not
+    firstMergeCrit       -    Criteria whether executed the first time or not
     nodes                -    Nodes
     WWTPs                -    WWTPs
     sewers_Current       -    sewer network from expansion module
@@ -3416,11 +3431,11 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
     maxTD                -    Maximum Trench Depth
     minSlope             -    Minimum slope
     discountYearsSewers  -    Discounting years
-    interestRate         -    Inerest rate
+    interestRate         -    Interest rate
     stricklerC           -    Strickler coefficient
     operationCosts       -    Operation costs
     pricekWh             -    energy costs
-    pumpYears            -    Lifepspan pumps
+    pumpYears            -    Lifespan pumps
     pumpInvestmentCosts  -    pump investment costs
     wwtpLifespan         -    wwtp lifespan
     EW_Q                 -    sewage per person per day
@@ -3487,7 +3502,7 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
             WWTPS_noCon = fastCopy(WWTPs)                      # Make copy 
             PN_noCon = fastCopy(PN)                            # Make copy 
             sortedListWWTPs_noCon = fastCopy(sortedListWWTPs)  # Make copy 
-            wwtpToWwtopConncetion = 0                          # Criteria to define wheter wwtps are connected or not                              
+            wwtpToWwtopConncetion = 0                          # Criteria to define whether wwtps are connected or not
                 
             while expansionM == True: 
                 _, pZero, _, _, forceCentralConnection, _ = getPns(checkBackConnectionID, nodes)  # Select wwtp where node was connected and test if connection is allowed
@@ -3661,7 +3676,7 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
                             else:
                                 nodes_B3 = assignInitialFlow(nodes_B3, pathBetweenWWTPs, flowInitial_to, 0)     # Change initial flow in nodes
                             
-                            nodes_B3 = clearFlow(nodes_B3, notInaNetwork)                                       # Clear flow wheter there is no flow
+                            nodes_B3 = clearFlow(nodes_B3, notInaNetwork)                                       # Clear flow whether there is no flow
                             nodes_B3 = changeFlowAlongPath(nodes_B3, pathBetweenWWTPsInvert)                    # Change flow along the path
                             nodes_B3, inflowNodesWTPB3 = correctTD(nodes_B3, pathBetweenWWTPsInvert[:-1], minTD, WWTPs, maxTD, minSlope, sewers)  # Set all trench depth except inflow nodes to minimum trench depth     
                             nodes_B3, pumpWWTPB3, edgeList3 = changeTD(nodes_B3, edgeList, pumpWWTPB3, archPathWWTP, maxTD, minSlope, inflowNodesWTPB3, sewers, minTD)
@@ -3678,7 +3693,7 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
                             totCostB2 = pipeCostsB2 + wtpCostB2 + pumpCostB2  # Total Costs Option 2
                             totCostB3 = pipeCostB3 + wtpCostA3 + pumpCostB3   # Total Costs Option 3
         
-                            #arcpy.AddMessage("-------------Cost Comparison----------") 
+                            #arcpy.AddMessage("-------------Cost Comparison----------")
                             #arcpy.AddMessage("totCostBI: " + str(totCostBI))
                             #arcpy.AddMessage("totCostB2: " + str(totCostB2))
                             #arcpy.AddMessage("totCostB2: " + str(totCostB3))
@@ -3737,7 +3752,7 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
                                     if needsNetworkRemoving == 1:
                                         PN, nodes, sortedListWWTPs = updatePrimEdges(allNodesToAddToPN, sewers, nodes, sortedListWWTPs)
 
-                                        if PN == []: # ALL deleted nodes were on path, don't quit expnasion module
+                                        if PN == []: # ALL deleted nodes were on path, don't quit expansion module
                                             break 
                                         else:
                                             nodes = removeForceCriteria(nodes, WWTPFROM)
@@ -3796,7 +3811,7 @@ def mergingModule(OnlyExecuteMerge, forceZ, ZtoReach, hypoZWeighted, firstMergeC
                                             nodes = adForceCriteria(nodes, allNodesToAddToPN)                   # Add a force connection criteria that all deleted nodes get connected in the EM
                                             return nodes, sewers, pumps, WWTPs, PN, edgeList, totalSystemCosts  # Return to expansion-module
 
-                                    # Create new PN and force connetion in nodes and restart the expansion-module
+                                    # Create new PN and force connection in nodes and restart the expansion-module
                                     if needsNetworkRemoving == 1:
                                         if PN == [] and OnlyExecuteMerge != 1:                                  # ALL deleted nodes were on path, don't quit expnasion module
                                             break 
@@ -3846,7 +3861,7 @@ def getCheapestMerge(mergeCostStorage, WWTPs):
     WWTPs               -    List with WWTPs
     
     Outpt:
-    mergeCostStorage    -    All merges withhout cheapest merge
+    mergeCostStorage    -    All merges without cheapest merge
     '''
     cheapestMerge = 999999999999
     
@@ -4156,7 +4171,7 @@ def createPolyPointPump(pntsFlow, outListStep_point):
     outListStep_point    --    Path to Output Folder
     
     Output Arguments:
-    draw                 --    Criteria wheter points are drawn or not (0: no, 1: yes)
+    draw                 --    Criteria whether points are drawn or not (0: no, 1: yes)
     """
     punkte, pointList, draw = arcpy.Point(), [], 1
 
@@ -4255,7 +4270,7 @@ def readOutAllStreetVerticesAfterAggregation(nodes, rasterPoints, rasterSize):
         # Assign height from closest rasterPoint (Takes a lot of time)
         fertig1, fertig2 = 0, 0
 
-        for i in rasterPoints: 
+        for i in rasterPoints:
             if (i[1] <= X_start + rasterSize and i[1] >= X_start - rasterSize) and (i[2] <= Y_start + rasterSize and i[2] >= Y_start - rasterSize):
                 heightSTART, fertig1 = i[3], 1
             if i[1] <= X_end + rasterSize and i[1] >= X_end - rasterSize and i[2] <= Y_end + rasterSize and i[2] >= Y_end - rasterSize:
@@ -4265,17 +4280,25 @@ def readOutAllStreetVerticesAfterAggregation(nodes, rasterPoints, rasterSize):
                 break
         
         if fertig1 == 0 and fertig2 == 0:
-            arcpy.AddMessage(" ERROR: Node of streetwork could not get assigned heigh of raster cell as no raster call was found." + str(fertig1) + " " + str(fertig2))
+            desc = arcpy.Describe("C:\\Users\\maj0062\\Documents\\TEMP\\LowndesCounty\\lowndes_dem_point.shp")
+            arcpy.AddMessage(" ERROR: Node of street network could not get assigned height of raster cell as no raster call was found." + str(fertig1) + " " + str(fertig2) + " X: " + str(X_start) + " Y: " + str(Y_start) + ". Raster size: " + str(rasterSize))
             #continue # In case a street has no height
                
         copyZ, copyZ2 = 1, 1
 
-        # Prevent that dublicate points are added
+        # Prevent that duplicate points are added
         for pnt in streetVert:
             if pnt[1] == X_start and pnt[2] == Y_start:
                 copyZ = 0
             if pnt[1] == X_end and pnt[2] == Y_end:
                 copyZ2 = 0
+
+        # Function to find height from rasterPoints
+        def find_height(x, y, rasterPoints, rasterSize):
+            for f in rasterPoints:
+                if (f[1] <= x + rasterSize and f[1] >= x - rasterSize) and \
+                        (f[2] <= y + rasterSize and f[2] >= y - rasterSize):
+                    return f[3]  # Return height if match found
 
         # If due to rounding the start and end becomes the same
         if X_start == X_end and Y_start == Y_end:
@@ -4283,11 +4306,13 @@ def readOutAllStreetVerticesAfterAggregation(nodes, rasterPoints, rasterSize):
 
         if copyZ == 1:
             IDNEW += 1
+            heightSTART = find_height(X_start, Y_start, rasterPoints, rasterSize)
             newZ = [IDNEW, X_start, Y_start, heightSTART]
             streetVert.append(newZ)
                 
         if copyZ2 == 1:
             IDNEW += 1
+            heightEND = find_height(X_start, Y_start, rasterPoints, rasterSize)
             newz2 = [IDNEW, X_end, Y_end, heightEND]
             streetVert.append(newz2)
     return streetVert
@@ -4499,7 +4524,7 @@ def writePath(dijkstraList, distancesDijka, start, end):
     """
     path, up, distStartEnd = [end], None, distancesDijka[end]
     
-    while up != start and start != end: # As long the startin node is not found
+    while up != start and start != end: # As long the starting node is not found
         up = dijkstraList[end]
         path.append(up)
         end = up
@@ -4538,7 +4563,7 @@ def readClosestPointsAggregate(in_FC):
     in_FC             --   Path to point shapefile.
     
     Output Arguments:
-    pointListNear     --     Form: [[ID, x, y, z, flowInNode (is zero because no connetion), flow in node, joker position, flow in Node], ...]
+    pointListNear     --     Form: [[ID, x, y, z, flowInNode (is zero because no connection), flow in node, joker position, flow in Node], ...]
     """
     rows = arcpy.SearchCursor(in_FC) 
     fields = arcpy.ListFields(in_FC) 
@@ -4553,7 +4578,7 @@ def readClosestPointsAggregate(in_FC):
                 NEAR_X = row.getValue(field.name)
             if field.name == "NEAR_Y":
                 NEAR_Y = row.getValue(field.name)
-            if field.name == "Q":  
+            if field.name == "Q":
                 Q = row.getValue(field.name)
                 
             # NEW 12.03.2015
@@ -4576,7 +4601,7 @@ def aggregate(pointListNear, AggregateKritStreet, outListStep_point, minTD):
     If a sewer inlet is within a defined distance to a next sewer inlet, the sewer inlets are merged and aggregated.
     
     Input Arguments: 
-    pointListNear             -   Nearest Points to buildlings on network. Aggregated.
+    pointListNear             -   Nearest Points to buildings on network. Aggregated.
     AggregateKritStreet       -   Criteria to aggregate streets.
     outListStep_point         -   Path to point shapefile. 
     minTD                     -   Minimum Trench Depth
@@ -4588,12 +4613,12 @@ def aggregate(pointListNear, AggregateKritStreet, outListStep_point, minTD):
     """
     pointList, buildingList, aggregatetStreetInlets, punkte = [], [], [], arcpy.Point()
     
-    # Aggregate points. The criteria AggregateKritStreet decides wheter a new point to the street is added or a aggregated
+    # Aggregate points. The criteria AggregateKritStreet decides whether a new point to the street is added or a aggregated
     for i in pointListNear:
         IdGeb, p0, StartDist = i[0], (i[1], i[2], i[3]), 10000000000
 
         
-        # Calculate wheter there is a point closer than the defined distance
+        # Calculate whether there is a point closer than the defined distance
         if len(aggregatetStreetInlets) > 0:     
             for e in aggregatetStreetInlets:
                 p1 = (e[1], e[2], e[3])
@@ -4728,10 +4753,12 @@ def updatefieldsPoints(shapefile_path):
     shapefile_path    --   Path to point shapefile.
     """
     from arcpy import env
+
     env.workspace = shapefile_path
+
+    # Add required fields
     arcpy.AddField_management(shapefile_path, "ID_scratch", "FLOAT")
-      
-    arcpy.DeleteField_management(shapefile_path, "Id")              
+    arcpy.DeleteField_management(shapefile_path, "Id")
     arcpy.AddField_management(shapefile_path, "ID", "FLOAT")
     arcpy.AddField_management(shapefile_path, "StreetID", "FLOAT")
     arcpy.AddField_management(shapefile_path, "NEAR_DIST", "FLOAT")
@@ -4740,18 +4767,24 @@ def updatefieldsPoints(shapefile_path):
     arcpy.AddField_management(shapefile_path, "X_END", "DOUBLE")
     arcpy.AddField_management(shapefile_path, "Y_START", "DOUBLE")
     arcpy.AddField_management(shapefile_path, "Y_END", "DOUBLE")
-    arcpy.DeleteField_management(shapefile_path, "ID_scratch")                                      # Delete automatically created field 
-    arcpy.CalculateField_management(shapefile_path, "LENGTH", "float(!SHAPE.LENGTH!)", "PYTHON")    # Update field in ArcGIS
-    
-    xStart = 'float(!shape.firstpoint!.split() [0])'
-    xEnd = 'float(!shape.lastpoint!.split() [0])'
-    yStart = 'float(!shape.firstpoint!.split() [1])'
-    yEnd = 'float(!shape.lastpoint!.split() [1])'
-      
-    arcpy.CalculateField_management(shapefile_path, "X_START", xStart, "PYTHON")
-    arcpy.CalculateField_management(shapefile_path, "X_END", xEnd, "PYTHON")
-    arcpy.CalculateField_management(shapefile_path, "Y_START", yStart, "PYTHON")
-    arcpy.CalculateField_management(shapefile_path, "Y_END", yEnd, "PYTHON")
+    arcpy.DeleteField_management(shapefile_path, "ID_scratch")  # Delete temporary field
+
+    # Update the LENGTH field
+    arcpy.CalculateField_management(shapefile_path, "LENGTH", "!SHAPE.LENGTH!", "PYTHON3")
+
+    # Calculate X_START, X_END, Y_START, Y_END using basic expressions
+    arcpy.CalculateField_management(
+        shapefile_path, "X_START", "!SHAPE.firstPoint.X!", "PYTHON3"
+    )
+    arcpy.CalculateField_management(
+        shapefile_path, "X_END", "!SHAPE.lastPoint.X!", "PYTHON3"
+    )
+    arcpy.CalculateField_management(
+        shapefile_path, "Y_START", "!SHAPE.firstPoint.Y!", "PYTHON3"
+    )
+    arcpy.CalculateField_management(
+        shapefile_path, "Y_END", "!SHAPE.lastPoint.Y!", "PYTHON3"
+    )
     return
 
 def updateFieldNode(shapefile_path):
@@ -4879,10 +4912,10 @@ def writeFieldNodesPUMPS(shapefile_path, pointListNear):
 
 def initialPrimCalc(firstIteration, origin, nodes, PN, initialPN):
     """
-    This functions calculateds the initial prim distances.
+    This functions calculates the initial prim distances.
     
     Input Arguments: 
-    firstIteration         -    Criteria wheter first Iteration or not
+    firstIteration         -    Criteria whether first Iteration or not
     origin                 -    Starting node
     nodes                  -    nodes
     PN                     -    PRIM distances
@@ -4931,12 +4964,12 @@ def primResultGISList(DrawHouses, VerticGraph, pntsFlowMin, streetVertices, buil
     listforcalc = []
     
     # Draw House Connections
-    if DrawHouses == 0:
+    if DrawHouses == 1:
         for node in buildings:
             pt_to1_X, pt_to1_Y, gebListe = node[0], node[1], node[2]
 
             for house in gebListe:     
-                for geb in buildPoints:  # Buildling coordinates
+                for geb in buildPoints:  # Building coordinates
                     if geb[0] == house:
                         ID, pt_from1_X, pt_from1_Y, flow = geb[0], geb[1], geb[2], geb[4]
                         break
@@ -5003,7 +5036,7 @@ def createVirtualDEM(rasterSize, border, buildPoints):
     Input Arguments:
     rasterSize       --    List with aggregated points
     border           --    Size of a tile [m]
-    buildPoints      --    List with buildlings
+    buildPoints      --    List with buildings
     
     Output Arguments:
     startnode        --    Return top left ID coordinate of tile with highest density
@@ -5106,7 +5139,7 @@ def assignStreetVertAggregationMode(aggregatetPoints, streetVertices, minTD):
     # Add all agreggatet points into vertexDict with scrapID and replace if point already existing
     for point in aggregatetPoints:
         x1, y1 = point[1], point[2]
-        # Check wheter the added point was in streetVertices
+        # Check whether the added point was in streetVertices
         for i in vertexDict:
             streetID, xNear, yNear, zNear = vertexDict[i][0], vertexDict[i][1], vertexDict[i][2], vertexDict[i][3]
             
@@ -5301,13 +5334,13 @@ def readRasterPoints(in_FC, anzForID):
                 X = row.getValue(field.name)
             if field.name == "POINT_Y":
                 Y = row.getValue(field.name)
-            if field.name == "GRID_CODE":  # Z-Value
+            if field.name == "grid_code":  # Z-Value
                 Z = row.getValue(field.name)
         
         pointListNear.append((ID, X, Y, Z))
         ID += 1
 
-    # Assign new ID. This is needed in order that DEM-Points don't get confused with conneciton points
+    # Assign new ID. This is needed in order that DEM-Points don't get confused with connection points
     anzForID = anzForID + 1000000
     pointListNearNewID = []
     
@@ -6067,5 +6100,5 @@ def getStatistics(startnode, sewers, pointsPrim, aggregatetPoints, WWTPs, edgeLi
     averageWWTPSize = averageWWTPSize / cnt
         
     # Statistics
-    statistics = [startnode, sources, sinks, degCen, degCenWeighted, nrOfNeighboursDensity, totalPublicPipeLength, totalPrivatePipeLenth, avreageTrenchDepth, averageHeight, averageWWTPSize]
+    statistics = ["startnode", startnode, "sources", sources, "sinks", sinks, "degCen", degCen, "degCenWeighted", degCenWeighted, "nrOfNeighboursDensity", nrOfNeighboursDensity, "totalPublicPipeLength", totalPublicPipeLength, "totalPrivatePipeLenth", totalPrivatePipeLenth, "avreageTrenchDepth", avreageTrenchDepth, "averageHeight", averageHeight, "averageWWTPSize", averageWWTPSize]
     return statistics

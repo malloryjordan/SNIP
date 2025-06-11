@@ -32,8 +32,18 @@
 # Contact:   sven.eggimann@eawag.ch
 # Version    1.0
 # Date:      1.12.2015
-# Autor:     Eggimann Sven
+# Author:     Eggimann Sven
 # ======================================================================================
+# The SNIP model was updated and modified for use in rural Alabama in 2025.
+# For detailed information see Jordan et al. (in prep).
+
+# The model was modified for Python 3.11 and ArcGIS Pro 3.4
+
+# Author:   Mallory Jordan
+# Date:     June 11, 2025
+# Contact:  maj0082@auburn.edu
+# ======================================================================================
+
 import math
 from SNIP_functions import *
 
@@ -101,7 +111,7 @@ def aStar(rasterSize, rasterPoints, buildPoints, start, end, idp0, idp1, neighbo
     aStarPath               --    A* Path
     boundingCandidates      --    All rasterpoints in bounding box of a* path
     """
-    maxNumberOfDEMPoints = 2000          # Maximal Number of points the a* Algorithm runs on
+    maxNumberOfDEMPoints = 20000000          # Maximal Number of points the a* Algorithm runs on
     shortListFROM, shortListTO = [], []
     
     # Assign FROMNODE and TONODE the closest DEM-cell Points

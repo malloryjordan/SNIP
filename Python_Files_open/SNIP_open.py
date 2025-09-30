@@ -54,14 +54,10 @@ from SNIP_astar_open import *                                    # Import a* fun
 from SNIP_costs_open import *                                    # Import cost functions
 
 # Prompt user for input paths
-in_street = r"C:\Users\maj0062\Documents\TEMP\SNIP_test\input_data\street_simplified_WhiteHall.shp"
-    #input("Enter the path to the street shapefile: ").strip('"').strip("'")
-buildings = r"C:\Users\maj0062\Documents\TEMP\SNIP_test\input_data\CorelogicParcel_point_Lowndes_WhiteHall.shp"
-    #input("Enter the path to the building shapefile: ").strip('"').strip("'")
-inDHM = r"C:\Users\maj0062\Documents\TEMP\SNIP_test\input_data\lowndes_dem_90_utm_WhiteHall.shp"
-    #input("Enter the path to the DEM point shapefile: ").strip('"').strip("'")
-outListFolder = r"C:\Users\maj0062\Documents\TEMP\SNIP_test\output"
-    #input("Enter the path to the output folder: ").strip('"').strip("'")
+in_street = input("Enter the path to the street shapefile: ").strip('"').strip("'")
+buildings = input("Enter the path to the building shapefile: ").strip('"').strip("'")
+inDHM = input("Enter the path to the DEM point shapefile: ").strip('"').strip("'")
+outListFolder = input("Enter the path to the output folder: ").strip('"').strip("'")
 
 # Ensure output folder exists
 outListFolder = outListFolder.replace("\\", "/") + "/"

@@ -53,7 +53,6 @@ from shapely.geometry import LineString, MultiLineString, GeometryCollection, Po
 from shapely.ops import split, nearest_points
 from SNIP_astar_open import *
 from SNIP_costs_open import *
-import arcpy
 
 
 def distanceCalc2d(p0, p1):
